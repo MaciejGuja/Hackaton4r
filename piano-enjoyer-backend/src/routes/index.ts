@@ -1,41 +1,12 @@
-import {Router} from 'express';
-import {syncEngine} from "../services/syncEngine.js";
-import {createPianoSession} from "../services/fishjamService.js";
-import {parseSheetMusic} from "../services/omrService.js";
-import {smelterService} from "../services/smelterService.js";
+import { Router } from 'express';
+import { upload } from "../middleware/upload.js";
+import { sessionRouter } from "./session.routes.js";
 
-export const sessionRouter = Router();
+export const router = Router();
 
-sessionRouter.post('/start', async (req, res) => {
-    try {
-        const { pdfPath, userDelay } = req.body;
-
-        const fishjamData = await createPianoSession();
-        const notes = await parseSheetMusic(pdfPath);
-        await smelterService.registerInput(fishjamData.roomId);
-
-        res.json({
-            ...fishjamData,
-            notesCount: notes.length,
-            status: "ready"
-        });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to initialize session" });
-    }
+router.post('/upload', upload.single("file"), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    res.json({ message: "File uploaded!", fileId: req.file.filename });
 });
 
-sessionRouter.post('/play', async (req, res) => {
-    const { roomId, notes, userDelay } = req.body;
-
-    syncEngine.start(notes, {
-        roomId,
-        userDelay: userDelay || 0
-    });
-
-    res.json({ status: "Playback started" });
-});
-
-sessionRouter.post('/stop', (req, res) => {
-    syncEngine.stop();
-    res.json({ status: "Playback stopped" });
-});
+router.use('/session', sessionRouter);
