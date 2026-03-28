@@ -1,0 +1,26 @@
+services:
+  fishjam:
+    image: public.ecr.aws/softwaremansion/fishjam:latest
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+      - "50000-50050:50000-50050/udp"
+    environment:
+      - FISHJAM_AUTH_TOKEN=dev_token_123
+      - FISHJAM_REVERSE_PROXY_ENABLED=false
+      - FISHJAM_LOG_LEVEL=info
+      - FISHJAM_HOST=localhost:8080
+    networks:
+      - piano_network
+
+  smelter:
+    image: public.ecr.aws/softwaremansion/smelter:latest
+    platform: linux/amd64
+    ports:
+      - "8090:8090"
+    networks:
+      - piano_network
+
+networks:
+  piano_network:
+    driver: bridge

@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fishjam-cloud/js-server-sdk": "^0.25.5",
     "@fishjam-cloud/ts-client": "^0.25.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
