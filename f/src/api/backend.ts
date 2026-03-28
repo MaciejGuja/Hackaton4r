@@ -20,7 +20,7 @@ export async function uploadPDF(file: any) {
 }
 
 export async function startSession(fileId: string, delay: number) {
-  const res = await fetch(${BASE_URL}/session/start-piano, {
+  const res = await fetch(`${BASE_URL}/session/start-piano`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ fileId, userDelay: delay })
@@ -32,7 +32,7 @@ export async function startSession(fileId: string, delay: number) {
 }
 
 export async function stopSession() {
-  await fetch(${BASE_URL}/session/stop, {
+  await fetch(`${BASE_URL}/session/stop`, {
     method: 'POST'
   });
 }

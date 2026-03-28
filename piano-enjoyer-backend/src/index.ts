@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { router } from "./routes/index.js"; // Importujemy główny router
+import { router } from "./routes/index.js";
 import path from "node:path";
 import { fileURLToPath } from 'node:url';
 
