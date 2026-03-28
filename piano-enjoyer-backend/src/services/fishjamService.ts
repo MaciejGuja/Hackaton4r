@@ -10,18 +10,21 @@ const fishjamClient = new FishjamClient({
 
 export const createPianoSession = async () => {
     try {
+        // create room
         const room = await fishjamClient.createRoom();
 
-        const { peerToken } = await fishjamClient.createPeer(room.id, {
-            metadata: { role: "piano-user" },
+        // create peer
+        const { peer, peerToken } = await fishjamClient.createPeer(room.id, {
+            metadata: { name: "piano-user" },
         });
 
-        console.log(`Session created: ${room.id}`);
+        console.log("Session created:", room.id);
+        console.log("Peer created:", peer.id);
 
         return {
             roomId: room.id,
             peerToken,
-            fishjamId: process.env.FISHJAM_ID
+            fishjamId: process.env.FISHJAM_ID,
         };
     } catch (error) {
         console.error("Fishjam Server Error:", error);
