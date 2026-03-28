@@ -1,18 +1,15 @@
 import axios from 'axios';
-import { KEY_MAP } from '../types/smelter.js';
+import type { KeyMap } from "./geminiService.js";
 
 export class SmelterService {
-    private readonly baseUrl = "http://smelter:8090"; // Adres wewnątrz sieci Docker
+    private readonly baseUrl = "http://smelter:8090";
+    private currentKeyMap: KeyMap[] = [];
 
-    /**
-     * Rejestruje wejście wideo z Fishjam do Smeltera.
-     * Fishjam zazwyczaj wystawia stream RTP lub webrtc.
-     */
     async registerInput(roomId: string) {
         try {
             await axios.post(`${this.baseUrl}/inputs/${roomId}/register`, {
-                type: "rtp", // lub webrtc w zależności od konfiguracji Fishjam
-                port: 5000 // przykładowy port
+                type: "rtp",
+                port: 5000
             });
             console.log(`[Smelter] Input registered for room ${roomId}`);
         } catch (error) {
@@ -20,43 +17,44 @@ export class SmelterService {
         }
     }
 
-    /**
-     * Najważniejsza funkcja: Rysuje "podświetlenie" nuty.
-     */
+    updateKeyMap(newMap: KeyMap[]) {
+        this.currentKeyMap = newMap;
+        console.log(`[Smelter] KeyMap updated with ${newMap.length} keys.`);
+    }
+
     async drawNoteHighlight(roomId: string, pitch: string, duration: number) {
-        const coords = KEY_MAP[pitch];
-        if (!coords) {
-            console.warn(`[Smelter] No coordinates for pitch: ${pitch}`);
+        const keyData = this.currentKeyMap.find(k => k.pitch === pitch);
+
+        if (!keyData) {
             return;
         }
 
-        const layerId = `note_${pitch}_${Date.now()}`;
+        const layerId = `note_${pitch}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
         try {
-            // 1. Dodaj warstwę (prostokąt)
             await axios.post(`${this.baseUrl}/scenes/${roomId}/layers`, {
                 id: layerId,
                 type: "rect",
                 position: {
-                    x: coords.x,
-                    y: coords.y,
-                    width: coords.width,
-                    height: coords.height
+                    x: keyData.x_percent,
+                    y: keyData.y_percent,
+                    width: keyData.width_percent,
+                    height: 0.1
                 },
-                color: "#00FF00AA", // Zielony z przezroczystością
+                style: {
+                    fill_color: "#00FF00AA",
+                }
             });
 
-            // 2. Usuń warstwę po upływie czasu trwania nuty
             setTimeout(async () => {
                 try {
                     await axios.delete(`${this.baseUrl}/scenes/${roomId}/layers/${layerId}`);
                 } catch (e) {
-                    // Ignorujemy błąd, jeśli sesja już się zamknęła
                 }
             }, duration);
 
         } catch (error) {
-            console.error("[Smelter] Draw error:", error);
+            console.error(`[Smelter] Draw error for ${pitch}:`, error);
         }
     }
 }
