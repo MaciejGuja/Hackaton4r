@@ -15,6 +15,7 @@
     "@fishjam-cloud/js-server-sdk": "^0.25.5",
     "@fishjam-cloud/ts-client": "^0.25.3",
     "@google/generative-ai": "^0.24.1",
+    "@react-navigation/native-stack": "^7.14.10",
     "axios": "^1.14.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
