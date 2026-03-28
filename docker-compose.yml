@@ -1,6 +1,6 @@
 services:
   fishjam:
-    image: public.ecr.aws/softwaremansion/fishjam:latest
+    image: ghcr.io/fishjam-cloud/fishjam:latest   # nowe miejsce
     platform: linux/amd64
     ports:
       - "8080:8080"
@@ -14,10 +14,7 @@ services:
       - piano_network
 
   smelter:
-    image: public.ecr.aws/softwaremansion/smelter:latest
-    platform: linux/amd64
-    ports:
-      - "8090:8090"
+    image: ghcr.io/software-mansion/smelter:latest  # jeśli potrzebujesz
     networks:
       - piano_network
 

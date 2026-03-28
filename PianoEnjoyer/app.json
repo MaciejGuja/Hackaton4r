@@ -1,4 +1,9 @@
 {
-  "name": "PianoEnjoyer",
-  "displayName": "PianoEnjoyer"
+  "expo": {
+    "name": "PianoEnjoyer",
+    "slug": "PianoEnjoyer",
+    "version": "1.0.0",
+    "scheme": "piano-enjoyer",
+    "platforms": ["ios", "android"]
+  }
 }
