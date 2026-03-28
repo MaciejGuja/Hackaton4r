@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    /* File Layout */
+    "rootDir": "./src",                          // Wskazuje, gdzie jest kod źródłowy
+    "outDir": "./dist",                         // Wskazuje, gdzie trafia skompilowany kod
+
+    /* Environment Settings */
+    "module": "NodeNext",                       // Kluczowe dla ESM w Node.js
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "lib": ["ESNext"],                          // Dodaje wsparcie dla najnowszych funkcji JS
+    "types": ["node"],                          // Wymaga zainstalowanego @types/node
+
+    /* Other Outputs */
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    /* Stricter Typechecking Options */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    /* Recommended Options */
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,               // Wymusza 'import type' (naprawia Twój błąd z Request/Response)
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "esModuleInterop": true,                    // Pozwala na czyste importy bibliotek CommonJS (np. cors)
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],                      // Mówi TS, jakie pliki ma kompilować
+  "exclude": ["node_modules", "dist"]           // Ignoruje te foldery
+}
