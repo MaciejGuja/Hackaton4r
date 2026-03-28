@@ -25,6 +25,6 @@ export const createPianoSession = async () => {
         };
     } catch (error) {
         console.error("Fishjam Server Error:", error);
-        throw new Error("Błąd podczas komunikacji z serwerem Fishjam.");
+        throw new Error("Communication failed.");
     }
 };
