@@ -1,41 +1,47 @@
-import { Note, KeyboardCoord } from '../store/useStore';
+import { KeyboardCoord } from '../store/useStore';
+import { BASE_URL } from './config';
 
-const BASE_URL = 'http://YOUR_BACKEND';
+export async function uploadPDF(file: any) {
+  const formData = new FormData();
+  formData.append('file', {
+    uri: file.uri,
+    type: 'application/pdf',
+    name: 'score.pdf',
+  } as any);
 
-export async function uploadPDF(file: { uri: string; name: string; type: string }) {
-  try {
-    const body = new FormData();
-    body.append('file', {
-      uri: file.uri,
-      name: file.name,
-      type: file.type,
-    } as any);
+  const res = await fetch(`${BASE_URL}/upload`, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 
-    const res = await fetch(`${BASE_URL}/upload`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body,
-    });
-
-    if (!res.ok) {
-      throw new Error(`Backend uploadPDF error: ${res.status}`);
-    }
-
-    const data = await res.json();
-    return data as { notes: Note[] };
-  } catch (error) {
-    console.warn('uploadPDF failed', error);
-    // Fallback sample data to keep UI flow
-    return {
-      notes: [
-        { pitch: 'C4', time: 1 },
-        { pitch: 'E4', time: 2.2 },
-        { pitch: 'G4', time: 3.5 },
-      ],
-    };
+  if (!res.ok) {
+    throw new Error(`uploadPDF failed: ${res.status}`);
   }
+
+  return res.json(); // { fileId }
+}
+
+export async function startSession(fileId: string, delay: number) {
+  const res = await fetch(`${BASE_URL}/session/start-piano`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fileId, userDelay: delay }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`startSession failed: ${res.status}`);
+  }
+
+  return res.json(); // fishjam + notesCount + roomId
+}
+
+export async function stopSession() {
+  await fetch(`${BASE_URL}/session/stop`, {
+    method: 'POST',
+  });
 }
 
 export async function getFishjamToken() {
@@ -56,7 +62,6 @@ export async function sendFrameToAI(frame: string) {
     }
 
     const data = await res.json();
-
     return data as { coords: KeyboardCoord[] };
   } catch (error) {
     console.warn('sendFrameToAI failed, returning sample coords', error);

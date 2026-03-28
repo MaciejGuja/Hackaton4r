@@ -15,34 +15,20 @@ export interface KeyboardCoord {
   pitch?: string;
 }
 
-type SetCurrentTimeAction = number | ((prev: number) => number);
-
-type SetDelayAction = number | ((prev: number) => number);
-
 interface State {
-  delay: number; // milliseconds
-  notes: Note[];
-  currentTime: number;
-  keyboardCoords: KeyboardCoord[];
-  setDelay: (d: SetDelayAction) => void;
-  setNotes: (n: Note[]) => void;
-  setCurrentTime: (t: SetCurrentTimeAction) => void;
-  setKeyboardCoords: (coords: KeyboardCoord[]) => void;
+  delay: number;
+  fileId: string | null;
+  roomId: string | null;
+  setDelay: (d: number) => void;
+  setFileId: (id: string) => void;
+  setRoomId: (id: string) => void;
 }
 
 export const useStore = create<State>((set) => ({
-  delay: 0,
-  notes: [],
-  currentTime: 0,
-  keyboardCoords: [],
-  setDelay: (d) =>
-    set((state) => ({
-      delay: typeof d === 'function' ? d(state.delay) : d,
-    })),
-  setNotes: (n) => set({ notes: n }),
-  setCurrentTime: (t) =>
-    set((state) => ({
-      currentTime: typeof t === 'function' ? t(state.currentTime) : t,
-    })),
-  setKeyboardCoords: (coords) => set({ keyboardCoords: coords }),
+  delay: 500,
+  fileId: null,
+  roomId: null,
+  setDelay: (d) => set({ delay: d }),
+  setFileId: (id) => set({ fileId: id }),
+  setRoomId: (id) => set({ roomId: id }),
 }));

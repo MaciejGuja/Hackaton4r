@@ -1,36 +1,36 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import DocumentPicker from 'react-native-document-picker';
+import { uploadPDF, startSession } from '../api/backend';
 import { useStore } from '../store/useStore';
-import { uploadPDF } from '../api/backend';
 
 export default function HomeScreen({ navigation }: any) {
-  const setNotes = useStore((s) => s.setNotes);
+  const setFileId = useStore((s) => s.setFileId);
+  const delay = useStore((s) => s.delay);
+  const setRoomId = useStore((s) => s.setRoomId);
 
-  const handleUpload = async () => {
+  const handleUploadAndStart = async () => {
     try {
-      // Placeholder for PDF upload - DocumentPicker will be added later when properly configured
-      const data = await uploadPDF({
-        uri: 'file://sample.pdf',
-        name: 'sample.pdf',
-        type: 'application/pdf',
-      });
+      const file = await DocumentPicker.pickSingle({ type: 'application/pdf' });
+      const uploadRes = await uploadPDF(file);
+      setFileId(uploadRes.fileId);
 
-      if (data.notes && data.notes.length > 0) {
-        setNotes(data.notes);
-        Alert.alert('Gotowe', `Wg ${data.notes.length} nut wgrano.`);
+      const session = await startSession(uploadRes.fileId, delay);
+      if (session.roomId) {
+        setRoomId(session.roomId);
       }
-    } catch (error: any) {
-      console.warn('Upload fail', error);
-      Alert.alert('Błąd', 'Nie udało się przesłać PDF');
+
+      navigation.navigate('Camera');
+    } catch (e) {
+      console.error(e);
+      Alert.alert('Błąd', 'Nie udało się rozpocząć sesji');
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🎹 Piano AI</Text>
-      <Button title="Wgraj PDF" onPress={handleUpload} />
-      <View style={styles.spacer} />
-      <Button title="Start" onPress={() => navigation.navigate('Camera')} />
+      <Button title="Wgraj PDF + Start" onPress={handleUploadAndStart} />
       <View style={styles.spacer} />
       <Button title="Ustawienia" onPress={() => navigation.navigate('Settings')} />
     </View>
