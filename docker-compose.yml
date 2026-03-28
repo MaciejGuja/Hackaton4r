@@ -1,23 +1,7 @@
 services:
-  fishjam:
-    image: ghcr.io/fishjam-cloud/fishjam:latest   # nowe miejsce
-    platform: linux/amd64
-    ports:
-      - "8080:8080"
-      - "50000-50050:50000-50050/udp"
-    environment:
-      - FISHJAM_AUTH_TOKEN=dev_token_123
-      - FISHJAM_REVERSE_PROXY_ENABLED=false
-      - FISHJAM_LOG_LEVEL=info
-      - FISHJAM_HOST=localhost:8080
-    networks:
-      - piano_network
-
   smelter:
-    image: ghcr.io/software-mansion/smelter:latest  # jeśli potrzebujesz
-    networks:
-      - piano_network
-
-networks:
-  piano_network:
-    driver: bridge
+    image: ghcr.io/software-mansion/smelter:v0.4.0
+    container_name: smelter
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
